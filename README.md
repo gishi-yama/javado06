@@ -1,6 +1,6 @@
 # Java Do #06
 
-## Mavenプロジェクトを作成しよう
+## 1. Mavenプロジェクトを作成しよう
 
 ### ① 内蔵されたHTTPサーバ(Grizzly)で動作させる場合
 
@@ -22,7 +22,7 @@ mvn archetype:generate -DarchetypeArtifactId=jersey-quickstart-webapp \
 
 このハンズオンでは、環境の影響を受けづらい①がオススメです。
 
-## MavenプロジェクトをIDEで読み込もう
+## 2. MavenプロジェクトをIDEで読み込もう
 
 ### IntelliJ
 
@@ -44,7 +44,7 @@ mvn archetype:generate -DarchetypeArtifactId=jersey-quickstart-webapp \
   - Browse > javado06 を選択
 
 
-## pom.xmlのJavaのバージョンを上げよう
+## 3. pom.xmlのJavaのバージョンを上げよう
 
 pom.xml の以下の部分を修正（1.7 → 1.8）
 
@@ -63,7 +63,7 @@ pom.xml の以下の部分を修正（1.7 → 1.8）
 ...
 ```
 
-## 起動の確認をしよう
+## 4. 起動の確認をしよう
 
 javado.lec06.Main を実行する。
 
@@ -71,7 +71,7 @@ javado.lec06.Main を実行する。
 
 `Got it!` と表示されればOK。
 
-## index.htmlを表示しよう
+## 5. index.htmlを表示しよう
 
 Main.javaのmainメソッドに、2行追加。
 
@@ -105,7 +105,7 @@ javado.lec06.Main を実行しなおす。
 
 http://localhost:8080/static/ にアクセスし、`HTML!`と表示されればOK。
 
-## 自分でResourceを作ってみよう
+## 6. 自分でResourceを作ってみよう
 
 ```java
 package javado.lec06;
@@ -134,13 +134,13 @@ javado.lec06.Main を実行しなおす。
 
 http://localhost:8080/myapp/calc/add/2/3 にアクセスして、`5`が表示されればOK。
 
-## 【演習】かけ算をするResourceメソッドを追加してみよう
+## 7.【演習】かけ算をするResourceメソッドを追加してみよう
 
 次のURLで整数のかけ算の結果`6`をテキストで返すように、CalcResourceを書き換えてみてください。
 
 http://localhost:8080/myapp/calc/div/2/3
 
-## ResourceでXMLをレスポンスしてみよう
+## 8. ResourceでXMLをレスポンスしてみよう
 
 Productクラスを作成する。
 
@@ -282,7 +282,7 @@ http://localhost:8080/myapp/product にアクセスして、下のようなXML�
 </product>
 ```
 
-## ResourceでJSONのレスポンスを返してみよう
+## 9. ResourceでJSONのレスポンスを返してみよう
 
 pom.xml の dependency を追加する。
 
@@ -312,7 +312,7 @@ http://localhost:8080/myapp/product にアクセスして、下のようなJSON�
 {"id":200,"name":"Java Do","price":2800}
 ```
 
-## 商品の一連の操作を実装してみよう（前準備）
+## 10. 商品の一連の操作を実装してみよう（前準備）
 
 ### DAOMockの準備
 
@@ -465,7 +465,7 @@ http://localhost:8080/myapp/product/all にブラウザでアクセスして、�
 [{"id":1,"name":"孤独のグルメ 【新装版】","price":1234},{"id":2,"name":"孤独のグルメ2","price":994}]
 ```
 
-### Rest Client を準備
+## 11. Rest Client を準備
 
 以下のサイトを参考にして、Chrome, Firefoxプラグインか、アプリケーションをダウンロードする。
 
@@ -499,7 +499,7 @@ Body のタブに下のようなJSONが表示されていればOK。
 [{"id":1,"name":"孤独のグルメ 【新装版】","price":1234},{"id":2,"name":"孤独のグルメ2","price":994}]
 ```
 
-## 商品を取得してみよう
+## 12. 商品を取得してみよう
 
 ProductResource クラスに次のメソッドを追加する。
 
@@ -533,7 +533,7 @@ Rest Client で、http://localhost:8080/myapp/product/2 を開くと下のよう
 http://localhost:8080/myapp/product/3 を開くと、 `400: Bad Request` が表示されればOK。
 
 
-## 商品を登録してみよう
+## 13. 商品を登録してみよう
 
 ProductResource クラスに次のメソッドを追加する。
 
@@ -577,7 +577,7 @@ javado.lec06.Main を実行しなおす。
 に戻して、 http://localhost:8080/myapp/product/all を呼び出すと、送信したデータが末尾に追加されていればOK。
 
 
-## 商品を更新してみよう
+## 14. 商品を更新してみよう
 
 ProductResource クラスに次のメソッドを追加する。
 
@@ -617,7 +617,7 @@ Rest Client で、
 
 に戻して、 http://localhost:8080/myapp/product/all を呼び出すと、id=1の名前と価格が送信したデータに上書きされていればOK。
 
-## 商品を削除してみよう
+## 15. 商品を削除してみよう
 
 ProductResource クラスに次のメソッドを追加する。
 
