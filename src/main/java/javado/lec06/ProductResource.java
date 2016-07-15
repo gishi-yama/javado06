@@ -63,7 +63,7 @@ public class ProductResource {
   @PUT
   @Path("{id}")
   @Consumes(MediaType.APPLICATION_JSON)
-  public Response putProducts(@PathParam("id") int id,  Product product) {
+  public Response putProducts(@PathParam("id") int id, Product product) {
     IDAOMock dao = DAOMock.getInstance();
     try {
       dao.update(id, product);
