@@ -79,7 +79,7 @@ public class DAOMock implements IDAOMock {
 
   @Override
   public synchronized void delete(int id) {
-    if (count(id) <= 0) {
+    if (count(id) > 0) {
       productMap.remove(id);
       return;
     }

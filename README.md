@@ -426,7 +426,7 @@ public class DAOMock implements IDAOMock {
 
   @Override
   public synchronized void delete(int id) {
-    if (count(id) <= 0) {
+    if (count(id) > 0) {
       productMap.remove(id);
       return;
     }
@@ -600,7 +600,7 @@ public Response putProducts(@PathParam("id") int id,  Product product) {
 
 javado.lec06.Main を実行しなおす。
 
-下記の画像の様に、Rest Client で、
+Rest Client で、
 
 - PUT
 - Content-type : application/json
@@ -616,6 +616,39 @@ javado.lec06.Main を実行しなおす。
 - GET
 
 に戻して、 http://localhost:8080/myapp/product/all を呼び出すと、id=1の名前と価格が送信したデータに上書きされていればOK。
+
+## 商品を削除してみよう
+
+ProductResource クラスに次のメソッドを追加する。
+
+```java
+@DELETE
+@Path("{id}")
+public Response deleteProduct(@PathParam("id") int id) {
+  IDAOMock dao = DAOMock.getInstance();
+  try {
+    dao.delete(id);
+    return Response.ok().build();
+  } catch (Exception e) {
+    e.printStackTrace();
+    int status = 400;
+    return Response.status(status).build();
+  }
+}
+```
+
+javado.lec06.Main を実行しなおす。
+
+Rest Client で、
+
+- DELETE
+
+を選択した上で、http://localhost:8080/myapp/product/1 を開くと `200: OK` が表示される。
+
+- GET
+
+に戻して、 http://localhost:8080/myapp/product/all を呼び出すと、id=1のデータが削除されていればOK。
+
 
 # 参考
 - [JAX-RSを始める #javaee 裏紙](http://backpaper0.github.io/2014/12/01/javaee_advent_calendar_2014.html)

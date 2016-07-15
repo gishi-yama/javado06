@@ -75,5 +75,18 @@ public class ProductResource {
     }
   }
 
+  @DELETE
+  @Path("{id}")
+  public Response deleteProduct(@PathParam("id") int id) {
+    IDAOMock dao = DAOMock.getInstance();
+    try {
+      dao.delete(id);
+      return Response.ok().build();
+    } catch (Exception e) {
+      e.printStackTrace();
+      int status = 400;
+      return Response.status(status).build();
+    }
+  }
 
 }
