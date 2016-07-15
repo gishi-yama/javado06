@@ -39,7 +39,8 @@ mvn archetype:generate -DarchetypeArtifactId=jersey-quickstart-webapp \
 ### Eclipse
 
 - File > Import...（日本語化していれば ファイル > インポート）
-  - Maven > Existing Maven Project（日本語化していれば、 Maven > 既存のMavenプロジェクト）
+  - Maven > Existing Maven Project  
+（日本語化していれば、 Maven > 既存のMavenプロジェクト）
   - Browse > javado06 を選択
 
 
@@ -254,9 +255,9 @@ http://localhost:8080/myapp/product にアクセスして、下のようなJSON�
 {"id":200,"name":"Java Do","price":2800}
 ```
 
-## 商品の一連の操作を実装してみよう
+## 商品の一連の操作を実装してみよう（前準備）
 
-### 前準備
+### DAOMockの準備
 
 ハンズオンの中でDatabaseの代わりに動作する DAOMock クラスを作成する。（時間が無い人はコピーで）
 
@@ -392,15 +393,13 @@ public List<Product> getProducts() {
 }
 ```
 
+javado.lec06.Main を実行しなおす。
+
 http://localhost:8080/myapp/product/all にブラウザでアクセスして、下のようなJSONが表示されればOK。
 
 ```json
 [{"id":1,"name":"孤独のグルメ 【新装版】","price":1234},{"id":2,"name":"孤独のグルメ2","price":994}]
 ```
-
-### 商品を取得
-
-
 
 ### Rest Client を準備
 
@@ -424,7 +423,56 @@ Download の [releases](https://github.com/wiztools/rest-client/releases) をク
 
 ダウンロードしたjarを起動する。(Macの場合、右クリックで「開く」)
 
-http://localhost:8080/myapp/calc/div/2/3 の URL を Get で開いて、 Body のタブに `5` と表示されていればOK。
+#### 動作確認
+
+javado.lec06.Main を実行しなおす。
+
+利用するRest Clientで、 http://localhost:8080/myapp/product/all の URL をGet で開く。
+
+Body のタブに下のようなJSONが表示されていればOK。
+
+```json
+[{"id":1,"name":"孤独のグルメ 【新装版】","price":1234},{"id":2,"name":"孤独のグルメ2","price":994}]
+```
+
+## 商品を取得
+
+ProductResource クラスに次のメソッドを追加する。
+
+```java
+@GET
+@Path("{id}")
+@Produces(MediaType.APPLICATION_JSON)
+public Response getProducts(@PathParam("id") int id) {
+  IDAOMock dao = DAOMock.getInstance();
+  try {
+    Product product = dao.select(id);
+    return Response.ok(product).build();
+  } catch (Exception e) {
+    e.printStackTrace();
+    // statusに4xxや5xxを設定してリクエストに対してHTTPのプロトコルを使い、
+    // サーバの処理状態（リクエスト不正やサーバ処理エラーなど）を通知することができる
+    int status = 400;
+    return Response.status(status).build();
+  }
+}
+```
+
+javado.lec06.Main を実行しなおす。
+
+Rest Client で、http://localhost:8080/myapp/product/2 を開くと下のようなJSONGが、
+
+```json
+{"id":2,"name":"孤独のグルメ2","price":994}
+```
+
+http://localhost:8080/myapp/product/3 を開くと、 `400: Bad Request` が表示されればOK。
+
+
+## 商品を登録
+
+
+
 
 # 参考
 - [JAX-RSを始める #javaee 裏紙](http://backpaper0.github.io/2014/12/01/javaee_advent_calendar_2014.html)
