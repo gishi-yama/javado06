@@ -134,7 +134,7 @@ javado.lec06.Main を実行しなおす。
 
 http://localhost:8080/myapp/calc/add/2/3 にアクセスして、`5`が表示されればOK。
 
-### 演習
+## 【演習】かけ算をするResourceメソッドを追加してみよう
 
 次のURLで整数のかけ算の結果`6`をテキストで返すように、CalcResourceを書き換えてみてください。
 
@@ -328,16 +328,17 @@ import java.util.List;
 
 public interface IDAOMock {
 
-    List<Product> select();
+  List<Product> select();
 
-    Product select(int id);
+  Product select(int id);
 
-    void insert(Product product);
+  void insert(Product product);
 
-    void update(Product product);
+  void update(int id, Product product);
 
-    void delete(int id);
+  void delete(int id);
 }
+
 ```
 
 IDAOMock.java を作成する。
@@ -354,91 +355,91 @@ import java.util.stream.Collectors;
  */
 public class DAOMock implements IDAOMock {
 
-    private static DAOMock instance = new DAOMock();
+  private static DAOMock instance = new DAOMock();
 
-    private Map<Integer, Product> productMap;
+  private Map<Integer, Product> productMap;
 
-    private DAOMock() {
-        productMap = new HashMap<>();
+  private DAOMock() {
+    productMap = new HashMap<>();
 
-        Product product1 = new Product();
-        product1.setName("孤独のグルメ 【新装版】");
-        product1.setPrice(1234);
-        insert(product1);
+    Product product1 = new Product();
+    product1.setName("孤独のグルメ 【新装版】");
+    product1.setPrice(1234);
+    insert(product1);
 
-        Product product2 = new Product();
-        product2.setName("孤独のグルメ2");
-        product2.setPrice(994);
-        insert(product2);
+    Product product2 = new Product();
+    product2.setName("孤独のグルメ2");
+    product2.setPrice(994);
+    insert(product2);
+  }
+
+  public static DAOMock getInstance() {
+    return instance;
+  }
+
+  @Override
+  public List<Product> select() {
+    List<Product> products = productMap.entrySet()
+        .stream()
+        .map(Map.Entry::getValue)
+        .sorted(Comparator.comparing(Product::getId))
+        .collect(Collectors.toList());
+    return products;
+  }
+
+  @Override
+  public Product select(int id) {
+    Optional<Product> product = productMap.entrySet()
+        .stream()
+        .filter(e -> Objects.equals(e.getKey(), id))
+        .map(e -> e.getValue())
+        .findFirst();
+    return product.orElseThrow(() -> new IllegalArgumentException("検索しようとしたidが存在しません:" + id));
+  }
+
+  @Override
+  public synchronized void insert(Product product) {
+    if (Objects.isNull(product)) {
+      throw new NullPointerException("登録データが存在しません");
     }
+    int maxId = productMap.entrySet()
+        .stream()
+        .map(Map.Entry::getKey)
+        .max((a, b) -> a.compareTo(b)).orElse(0);
+    int newId = maxId + 1;
+    product.setId(newId);
+    productMap.put(newId, product);
+  }
 
-    public static DAOMock getInstance() {
-        return instance;
+  @Override
+  public synchronized void update(int id, Product product) {
+    if (Objects.isNull(product)) {
+      throw new NullPointerException("更新データが存在しません");
     }
-
-    @Override
-    public List<Product> select() {
-        List<Product> products = productMap.entrySet()
-                .stream()
-                .map(Map.Entry::getValue)
-                .sorted(Comparator.comparing(Product::getId))
-                .collect(Collectors.toList());
-        return products;
+    product.setId(id);
+    if (count(id) > 0) {
+      productMap.replace(id, product);
+      return;
     }
+    throw new IllegalArgumentException("更新しようとしたidが存在しません:" + id);
+  }
 
-    @Override
-    public Product select(int id) {
-        Optional<Product> product = productMap.entrySet()
-                .stream()
-                .filter(e -> Objects.equals(e.getKey(), id))
-                .map(e -> e.getValue())
-                .findFirst();
-        return product.orElseThrow(() -> new IllegalArgumentException("検索しようとしたidが存在しません:" + id));
+  @Override
+  public synchronized void delete(int id) {
+    if (count(id) <= 0) {
+      productMap.remove(id);
+      return;
     }
+    throw new IllegalArgumentException("削除しようとしたidが存在しません:" + id);
 
-    @Override
-    public synchronized void insert(Product product) {
-        if(Objects.isNull(product)) {
-            throw new NullPointerException("登録データが存在しません");
-        }
-        int maxId = productMap.entrySet()
-                .stream()
-                .map(Map.Entry::getKey)
-                .max((a, b) -> a.compareTo(b)).orElse(0);
-        int newId = maxId + 1;
-        product.setId(newId);
-        productMap.put(newId, product);
-    }
+  }
 
-    @Override
-    public synchronized void update(Product product) {
-        if(Objects.isNull(product)) {
-            throw new NullPointerException("更新データが存在しません");
-        }
-        int id = product.getId();
-        if (count(id) > 0) {
-            productMap.replace(id, product);
-            return;
-        }
-        throw new IllegalArgumentException("更新しようとしたidが存在しません:" + id);
-    }
-
-    @Override
-    public synchronized void delete(int id) {
-        if (count(id) <= 0) {
-            productMap.remove(id);
-            return;
-        }
-        throw new IllegalArgumentException("削除しようとしたidが存在しません:" + id);
-
-    }
-
-    protected long count(int id) {
-        return productMap.entrySet()
-                .stream()
-                .filter(e -> Objects.equals(e.getKey(), id))
-                .count();
-    }
+  protected long count(int id) {
+    return productMap.entrySet()
+        .stream()
+        .filter(e -> Objects.equals(e.getKey(), id))
+        .count();
+  }
 
 }
 
@@ -569,14 +570,52 @@ javado.lec06.Main を実行しなおす。
 にした上で、 http://localhost:8080/myapp/product を開くと `200: OK` が表示される。
 
 
-![Chromeでの例](img/RestClientPost.jpg)
+![Chromeでの例](https://raw.githubusercontent.com/gishi-yama/javado06/master/img/RestClientPost.jpg)
 
 - GET
 
-に戻して、 http://localhost:8080/myapp/product/all を呼び出すと、末尾に登録したデータが追加されていればOK。
+に戻して、 http://localhost:8080/myapp/product/all を呼び出すと、送信したデータが末尾に追加されていればOK。
 
 
+## 商品を更新してみよう
 
+ProductResource クラスに次のメソッドを追加する。
+
+```java
+@PUT
+@Path("{id}")
+@Consumes(MediaType.APPLICATION_JSON)
+public Response putProducts(@PathParam("id") int id,  Product product) {
+  IDAOMock dao = DAOMock.getInstance();
+  try {
+    dao.update(id, product);
+    return Response.ok().build();
+  } catch (Exception e) {
+    e.printStackTrace();
+    int status = 400;
+    return Response.status(status).build();
+  }
+}
+```
+
+javado.lec06.Main を実行しなおす。
+
+下記の画像の様に、Rest Client で、
+
+- PUT
+- Content-type : application/json
+
+を選択し、Body（Raw Payload）を
+
+```json
+{"name":"ダンジョン飯1巻","price":463}
+```
+
+にした上で、 http://localhost:8080/myapp/product/1 を開くと `200: OK` が表示される。
+
+- GET
+
+に戻して、 http://localhost:8080/myapp/product/all を呼び出すと、id=1の名前と価格が送信したデータに上書きされていればOK。
 
 # 参考
 - [JAX-RSを始める #javaee 裏紙](http://backpaper0.github.io/2014/12/01/javaee_advent_calendar_2014.html)

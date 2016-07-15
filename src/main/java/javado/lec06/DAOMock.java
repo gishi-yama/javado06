@@ -65,11 +65,11 @@ public class DAOMock implements IDAOMock {
   }
 
   @Override
-  public synchronized void update(Product product) {
+  public synchronized void update(int id, Product product) {
     if (Objects.isNull(product)) {
       throw new NullPointerException("更新データが存在しません");
     }
-    int id = product.getId();
+    product.setId(id);
     if (count(id) > 0) {
       productMap.replace(id, product);
       return;

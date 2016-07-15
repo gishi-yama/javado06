@@ -60,5 +60,20 @@ public class ProductResource {
     }
   }
 
+  @PUT
+  @Path("{id}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response putProducts(@PathParam("id") int id,  Product product) {
+    IDAOMock dao = DAOMock.getInstance();
+    try {
+      dao.update(id, product);
+      return Response.ok().build();
+    } catch (Exception e) {
+      e.printStackTrace();
+      int status = 400;
+      return Response.status(status).build();
+    }
+  }
+
 
 }
