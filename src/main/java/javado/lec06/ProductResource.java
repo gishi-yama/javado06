@@ -45,7 +45,7 @@ public class ProductResource {
   }
 
 
-  // Consumes hはリクエスト、ProducesはレスポンスのContent-Typeを表す
+  // Consumesはリクエスト、ProducesはレスポンスのContent-Typeを表す
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   public Response postProducts(Product product) {
