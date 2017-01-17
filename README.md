@@ -1,8 +1,8 @@
 # Java Do #06
 
-JAX-RS（Jersy）の初心者向けハンズオンです。
+JAX-RS（Jersey）の初心者向けハンズオンです。
 
-- [1. JAX-RS（Jersy）のMavenプロジェクトを作成しよう](./doc/01.md)
+- [1. JAX-RS（Jersey）のMavenプロジェクトを作成しよう](./doc/01.md)
 - [2. MavenプロジェクトをIDEで読み込もう](./doc/02.md)
 - [3. pom.xmlのJavaのバージョンを上げよう](./doc/03.md)
 - [4. 起動の確認をしよう](./doc/04.md)
